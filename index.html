@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlobeNest - Global Chat</title>
     
-    <!-- Firebase JS SDK (v8 Compatible Bundle) -->
+    <!-- Firebase Libraries (v8 Compat SDKs) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
@@ -74,11 +74,11 @@
 </div>
 
 <script>
-    // Live Cloud Keys (Updated with Project ID prefixes)
+    // Live Cloud Keys
     const firebaseConfig = {
         apiKey: "AIzaSyBpd_OwFrtuNbkJXGjEw7oUTGOnC-pWg",
         authDomain: "globenest-513ff.firebaseapp.com",
-        databaseURL: "https://globenest-513ff-default-rtdb.firebaseio.com",
+        databaseURL: "https://globenest-513ff-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "globenest-513ff",
         storageBucket: "globenest-513ff.firebasestorage.app",
         messagingSenderId: "67343401297",
@@ -86,7 +86,7 @@
         measurementId: "G-FWMXG1JC7"
     };
 
-    // Initialize Firebase First!
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     
@@ -125,7 +125,7 @@
         const messageArea = document.getElementById("message-area");
         messageArea.innerHTML = "";
         
-        // Remove old listeners before attaching to prevent duplicate handlers
+        // Remove existing listener to avoid duplication when re-indexing
         database.ref("global_messages").off();
 
         database.ref("global_messages").limitToLast(50).on("child_added", (snapshot) => {
@@ -138,11 +138,11 @@
             
             const messageElement = document.createElement("div");
             messageElement.classList.add("message");
-
-            // Text sanitization
+            
+            // XSS Prevention Sanitization
             const safeUsername = document.createTextNode(data.username).textContent;
             const safeText = document.createTextNode(data.text).textContent;
-            
+
             if (data.username === currentUsername) {
                 messageElement.classList.add("sent");
                 messageElement.innerHTML = `<span>${safeText}</span>`;
@@ -157,7 +157,7 @@
                     </div>
                 `;
 
-                // Event listeners attached directly (prevents script errors on special characters)
+                // Secure Event Listeners (prevents syntax breaks on quotes or special chars)
                 messageElement.querySelector(".block-btn").addEventListener("click", () => blockUser(data.username));
                 messageElement.querySelector(".report-btn").addEventListener("click", () => reportMessage(messageId, data.username, data.text));
             }
@@ -189,7 +189,7 @@
         }
     }
 
-    // Keypress handlers
+    // Keyboard bindings
     document.getElementById("message-input").addEventListener("keypress", function(e) {
         if (e.key === 'Enter') sendMessage();
     });
